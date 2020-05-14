@@ -6,7 +6,7 @@
 #include <sys/stat.h>
 
 #define MAX 100
-#define OUTPUT "./rs.txt"
+#define OUTPUT "rs.txt"
 
 int dist_run(int dist_size, off_t offset, int *pip) {
     int i;
@@ -17,27 +17,15 @@ int dist_run(int dist_size, off_t offset, int *pip) {
     if (lseek(STDIN_FILENO, offset, SEEK_SET) < 0)
         return 0;
 
-    /* Buffer to hold the bytes of numbers */
-    char buff[dist_size * sizeof(int)];
-
-    /* Number of processed items */
-    procd = 0;
-    for (i = 0; i < dist_size; i++)
-        /* Perform the read using the offset */
-        if (read(STDIN_FILENO, buff, sizeof(int)))
-            return 0;
-        else
-            procd++;
-
-    /* Write result in pipe */
-    if (write(pip[1], &procd, sizeof(int)) == -1)
+    /* Write number of items in pipe */
+    if (write(pip[1], &dist_size, sizeof(int)) == -1)
         return 0;
 
     /* Close pipes */
     close(pip[0]);
     close(pip[1]);
 
-    /* Build and execute command */ 
+    /* Build and execute command with already altered STDIN */ 
     char *comm[] = {"./add", ">", OUTPUT, NULL};
     execvp(comm[0], comm);
 
