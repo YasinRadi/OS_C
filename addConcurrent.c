@@ -26,7 +26,7 @@ int dist_run(int dist_size, off_t offset, int *pip) {
     close(pip[1]);
 
     /* Build and execute command with already altered STDIN */ 
-    char *comm[] = {"./add", ">", OUTPUT, NULL};
+    char *comm[] = {"./add", ">>", OUTPUT, NULL};
     execvp(comm[0], comm);
 
     /* Shouldn not arrive here. */
